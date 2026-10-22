@@ -152,3 +152,6 @@ button.award{width:100%;border:0;text-align:left;font:inherit;color:inherit;curs
 .full{animation:fade .25s}.fs{background:#f6fafa;border-radius:16px;padding:14px 14px 6px;margin:10px 0}.fs h4{margin:0 0 8px;font-size:16px;color:var(--td)}
 .fs p,.fs ul{color:#3e5356;font-size:14.5px;margin:0 0 8px}.fs ul{margin-left:18px}.fs li{margin:4px 0}
 .acts.sticky{position:sticky;bottom:0;background:linear-gradient(transparent,#fff 18%);padding:18px 0 calc(16px + env(safe-area-inset-bottom));margin-top:8px;grid-template-columns:1.4fr 1fr}
+.fab .f{width:54px;height:54px;border-radius:50%;display:flex;align-items:center;justify-content:center;box-shadow:0 8px 20px -6px rgba(0,0,0,.35),0 2px 6px rgba(0,0,0,.15);-webkit-backdrop-filter:none}
+.fab .f svg{width:28px;height:28px;fill:#fff;flex:none}
+.fab .f.vk{background:#0077FF}.fab .f.tg{background:#229ED9}.fab .f.max{background:#7B3FF2;background:linear-gradient(135deg,#2E8BFF 0%,#7B3FF2 55%,#B23BE8 100%)}
