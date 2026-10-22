@@ -147,3 +147,8 @@ button.award{width:100%;border:0;text-align:left;font:inherit;color:inherit;curs
 .vk{background:#0077ff}.max{background:linear-gradient(135deg,#3d8bff,#8a3dff)}.f svg{width:28px}
 .helper-link{font-size:14px}.helper-link a b{color:var(--t)}
 .hero-in>.perks{grid-column:1/-1;margin-top:-6px;margin-bottom:0}
+.svc-sheet{padding-bottom:0}.svc-sheet .teaser{color:var(--ink);font-size:15.5px;margin-bottom:12px}
+.more-btn{display:flex;width:100%;justify-content:center;align-items:center;gap:6px;border:2px solid var(--t2);background:#e8f5f5;color:var(--td);font:inherit;font-weight:800;font-size:16px;border-radius:14px;padding:13px;cursor:pointer;margin:4px 0 8px}
+.full{animation:fade .25s}.fs{background:#f6fafa;border-radius:16px;padding:14px 14px 6px;margin:10px 0}.fs h4{margin:0 0 8px;font-size:16px;color:var(--td)}
+.fs p,.fs ul{color:#3e5356;font-size:14.5px;margin:0 0 8px}.fs ul{margin-left:18px}.fs li{margin:4px 0}
+.acts.sticky{position:sticky;bottom:0;background:linear-gradient(transparent,#fff 18%);padding:18px 0 calc(16px + env(safe-area-inset-bottom));margin-top:8px;grid-template-columns:1.4fr 1fr}
