@@ -146,3 +146,4 @@ button.award{width:100%;border:0;text-align:left;font:inherit;color:inherit;curs
 .hero-text,.hero-img{min-width:0}
 .vk{background:#0077ff}.max{background:linear-gradient(135deg,#3d8bff,#8a3dff)}.f svg{width:28px}
 .helper-link{font-size:14px}.helper-link a b{color:var(--t)}
+.hero-in>.perks{grid-column:1/-1;margin-top:-6px;margin-bottom:0}
