@@ -173,3 +173,5 @@ button.award{width:100%;border:0;text-align:left;font:inherit;color:inherit;curs
 .sum-act{display:flex;gap:8px;margin-top:10px}.sum-act button{flex:1;border:0;background:#fff;border-radius:12px;padding:10px;font:inherit;font-weight:800;color:var(--t);cursor:pointer;box-shadow:0 1px 0 #d6e6e7}
 #hOut .res{text-align:left;margin-top:14px}#hOut .res h3{font-size:21px}#hOut .res .btn{margin-top:8px}
 .done .cm{border-top:1px dashed #d6e6e7;padding-top:8px;margin-top:4px;font-size:13.5px;color:#3e5356}
+.totop{position:fixed;left:14px;bottom:calc(16px + env(safe-area-inset-bottom));z-index:60;display:flex;align-items:center;gap:4px;border:0;border-radius:999px;padding:11px 15px 11px 11px;background:var(--td);color:#fff;font:inherit;font-weight:800;font-size:14px;box-shadow:0 8px 20px -6px rgba(0,0,0,.35);cursor:pointer;opacity:0;transform:translateY(20px);pointer-events:none;transition:.25s}
+.totop.show{opacity:1;transform:none;pointer-events:auto}
