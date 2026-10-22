@@ -6,6 +6,7 @@ const SVC=[
 ['exot','Экзотолог, ратолог, герпетолог','🦎','exo'],['stoma','Стоматология','🦷','spec'],['nevro','Неврология','🧠','spec'],
 ['nefro','Нефрология','💧','spec'],['oftalm','Офтальмология','👁️','spec'],['ornito','Орнитология','🦜','exo'],['pulmo','Пульмонология','🫁','spec']];
 const DOCS=[
+['bokovenko','Боковенко Дарья Дмитриевна','Кардиолог, специалист визуальной диагностики','10 лет','Главный врач'],
 ['kramar','Крамарь Николай Николаевич','Хирург, травматолог-ортопед, эндоскопист','10 лет','Главный врач'],
 ['fadeeva','Фадеева Ирина Геннадьевна','Терапевт, эндокринолог','10 лет','Зав. терапевтическим отделением'],
 ['mayer','Майер Татьяна Юрьевна','Хирург, ортопед, эндоскопия, неврология','17 лет'],
@@ -33,12 +34,21 @@ const DOCS=[
 const $=s=>document.querySelector(s);
 // services
 const grid=$('#svcGrid');
-function drawSvc(f){grid.innerHTML=SVC.filter(s=>f==='all'||s[3].split(' ').includes(f)).map(s=>`<div class="svc" data-s="${s[0]}"><img loading="lazy" src="img/svc/${s[0]}.webp" alt="${s[1]}"><div><i>${s[2]}</i><b>${s[1]}</b></div></div>`).join('')}
+function drawSvc(f){grid.innerHTML=SVC.filter(s=>f==='all'||s[3].split(' ').includes(f)).map(s=>`<div class="svc" data-s="${s[0]}"><img loading="lazy" src="img/svc/${s[0]}.webp" alt="${s[1]}"><div><i>${s[2]}</i><b>${s[1]}</b><u class="arr">›</u></div></div>`).join('')}
 drawSvc('all');
 $('#svcFilter').addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;document.querySelectorAll('#svcFilter button').forEach(x=>x.classList.toggle('on',x===b));drawSvc(b.dataset.f)});
+let SVCD=null;fetch('svc.json').then(r=>r.json()).then(j=>SVCD=j).catch(()=>{});
+const esc=x=>x.replace(/[<>&]/g,c=>({'<':'&lt;','>':'&gt;','&':'&amp;'}[c]));
+function blk(items){let h='',ul=[];const fl=()=>{if(ul.length){h+='<ul>'+ul.map(x=>'<li>'+esc(x)+'</li>').join('')+'</ul>';ul=[]}};items.forEach(([t,x])=>{if(t==='li')ul.push(x);else{fl();h+='<p>'+esc(x)+'</p>'}});fl();return h}
+const GEN={exot:1,ornito:1,uzi:1};
 grid.addEventListener('click',e=>{const c=e.target.closest('.svc');if(!c)return;const s=SVC.find(x=>x[0]===c.dataset.s);
- const m=document.createElement('div');m.className='modal';m.innerHTML=`<div class="sheet"><img src="img/svc/${s[0]}.webp" alt=""><h3>${s[2]} ${s[1]}</h3><p>Запишитесь онлайн или позвоните, и администратор подберет удобное время и специалиста.</p><button class="btn primary wide" data-go>Записаться на эту услугу</button><a class="btn ghost" href="tel:+74953749911">Позвонить</a></div>`;
- m.addEventListener('click',ev=>{if(ev.target===m)m.remove();if(ev.target.closest('[data-go]')){$('#bSvc').value=s[1];m.remove();$('#booking').scrollIntoView()}});document.body.appendChild(m)});
+ const site=(SVCD&&SVCD[s[0]])||[];
+ const acc=site.map((b,i)=>`<details ${i===0?'open':''}><summary>${esc(b[0])}</summary><div class="acc">${blk(b[1])}</div></details>`).join('')+
+ `<details><summary>Как проходит визит</summary><div class="acc"><ul><li>Врач расспросит Вас о самочувствии, питании и прививках питомца</li><li>Проведет осмотр и при необходимости назначит диагностику: анализы, УЗИ и другое</li><li>Объяснит диагноз и план лечения, ответит на вопросы на любом этапе</li><li>Все данные визита сохранятся в электронной карте питомца</li></ul></div></details>`+
+ `<details><summary>Как подготовиться (общие рекомендации)</summary><div class="acc"><ul><li>Возьмите ветпаспорт и результаты прошлых анализов, выписки</li><li>Запишите, какие симптомы и с какого времени Вы заметили, что питомец ел и пил</li><li>Кошек и мелких животных везите в переноске, собак на поводке</li><li>Если возможны анализы или процедура под наркозом, уточните при записи, нужно ли не кормить питомца</li></ul><p class="gen">Это общие советы. Точную подготовку для Вашего случая подскажет администратор или врач.</p></div></details>`+
+ `<details><summary>Каких животных принимаем</summary><div class="acc"><p>${GEN[s[0]]?'Кроме кошек и собак, этим направлением занимаются врачи, которые принимают экзотических животных и птиц.':'Кошки и собаки. Экзотических животных и птиц принимают профильные специалисты: экзотолог, герпетолог, орнитолог.'}</p></div></details>`;
+ const m=document.createElement('div');m.className='modal';m.innerHTML=`<div class="sheet"><button class="x" aria-label="Закрыть">×</button><img src="img/svc/${s[0]}.webp" alt=""><h3>${s[2]} ${s[1]}</h3><div class="accs">${acc}</div><div class="acts"><button class="btn primary" data-go>Записаться</button><a class="btn ghost" href="tel:+74953749911">Позвонить</a></div><p class="gen">Описание по материалам сайта клиники boni-vet.ru.</p></div>`;
+ m.addEventListener('click',ev=>{if(ev.target===m||ev.target.closest('.x'))return m.remove();if(ev.target.closest('[data-go]')){$('#bSvc').value=s[1];m.remove();$('#booking').scrollIntoView()}});document.body.appendChild(m)});
 // doctors
 const docs=$('#docs');
 docs.innerHTML=DOCS.map(d=>`<div class="doc"><img loading="lazy" src="img/doc/${d[0]}.webp" alt="${d[1]}"><div>${d[4]?`<div class="pos">${d[4]}</div>`:''}<b>${d[1]}</b><span>${d[2]}</span>${d[3]?`<em class="xp">Стаж ${d[3]}</em>`:''}<em class="more" style="display:block;font-style:normal;font-size:12px;font-weight:800;color:var(--t);margin-top:6px">Подробнее →</em></div></div>`).join('');
