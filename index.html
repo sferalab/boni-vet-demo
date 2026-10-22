@@ -22,7 +22,7 @@
   <div class="hero-bg"></div>
   <div class="hero-in">
     <div class="hero-text">
-      <div class="badge-row"><span class="badge live"><i></i>Открыто сейчас · 24/7</span><span class="badge soft">м. Коломенская</span></div>
+      <div class="badge-row"><button type="button" class="badge live" data-info="247"><i></i>Открыто сейчас · 24/7</button><button type="button" class="badge soft" data-info="route">📍 м. Коломенская</button></div>
       <h1>Ветеринарная помощь <em>круглосуточно</em>, без выходных</h1>
       <p class="lead">Многопрофильная клиника на Судостроительной. Анализы крови за&nbsp;1&nbsp;час, своя аптека, стационар и&nbsp;узкие специалисты.</p>
       <div class="cta">
@@ -33,8 +33,8 @@
     </div>
     <div class="hero-img">
       <img src="img/hero.webp" alt="Питомцы клиники Доктор Бонифаций">
-      <div class="float-card c1"><b>1 час</b><span>анализы крови</span></div>
-      <div class="float-card c2"><b>24/7</b><span>без выходных</span></div>
+      <button type="button" class="float-card c1" data-info="blood"><b>1 час</b><span>анализы крови →</span></button>
+      <button type="button" class="float-card c2" data-info="247"><b>24/7</b><span>без выходных →</span></button>
     </div>
   </div>
 </section>
@@ -42,16 +42,16 @@
 <section class="adv" id="adv">
   <div class="wrap">
     <div class="adv-grid">
-      <div class="adv-i"><div class="ic">🩸</div><b>Анализы за 1 час</b><span>Свои анализаторы: общий и биохимический анализ крови</span></div>
-      <div class="adv-i"><div class="ic">🌙</div><b>24/7</b><span>Каждый день, круглосуточно, без выходных</span></div>
-      <div class="adv-i"><div class="ic">💊</div><b>Своя аптека</b><span>Все нужное сразу или под заказ</span></div>
-      <div class="adv-i"><div class="ic">🔬</div><b>Ведущие лаборатории</b><span>Исследования любой сложности в короткие сроки</span></div>
-      <div class="adv-i"><div class="ic">🏷️</div><b>Скидка 5%</b><span>Пенсионерам по пенсионному удостоверению</span></div>
-      <div class="adv-i"><div class="ic">☕</div><b>Комфорт</b><span>Чай и кофе для Вас, вода для питомца</span></div>
-      <div class="adv-i"><div class="ic">📋</div><b>Электронная карта</b><span>Вся история визитов питомца в одном месте</span></div>
-      <div class="adv-i"><div class="ic">🔔</div><b>Напомним о визите</b><span>Заранее сообщим дату и время приема</span></div>
+      <button type="button" class="adv-i" data-info="blood"><div class="ic">🩸</div><b>Анализы за 1 час</b><span>Свои анализаторы: общий и биохимический анализ крови</span><em class="more">Подробнее →</em></button>
+      <button type="button" class="adv-i" data-info="247"><div class="ic">🌙</div><b>24/7</b><span>Каждый день, круглосуточно, без выходных</span><em class="more">Подробнее →</em></button>
+      <button type="button" class="adv-i" data-info="pharm"><div class="ic">💊</div><b>Своя аптека</b><span>Все нужное сразу или под заказ</span><em class="more">Подробнее →</em></button>
+      <button type="button" class="adv-i" data-info="labs"><div class="ic">🔬</div><b>Ведущие лаборатории</b><span>Исследования любой сложности в короткие сроки</span><em class="more">Подробнее →</em></button>
+      <button type="button" class="adv-i" data-info="disc"><div class="ic">🏷️</div><b>Скидка 5%</b><span>Пенсионерам по пенсионному удостоверению</span><em class="more">Подробнее →</em></button>
+      <button type="button" class="adv-i" data-info="comfort"><div class="ic">☕</div><b>Комфорт</b><span>Чай и кофе для Вас, вода для питомца</span><em class="more">Подробнее →</em></button>
+      <button type="button" class="adv-i" data-info="card"><div class="ic">📋</div><b>Электронная карта</b><span>Вся история визитов питомца в одном месте</span><em class="more">Подробнее →</em></button>
+      <button type="button" class="adv-i" data-info="remind"><div class="ic">🔔</div><b>Напомним о визите</b><span>Заранее сообщим дату и время приема</span><em class="more">Подробнее →</em></button>
     </div>
-    <div class="labs"><span>Лаборатории-партнеры:</span><b>Шанс-Био</b><b>CITO</b><b>Неовет</b><b>ВЕТЛАБ</b><b>ВетЮнион</b></div>
+    <div class="labs"><span>Лаборатории-партнеры:</span><button type="button" data-info="labs">Шанс-Био</button><button type="button" data-info="labs">CITO</button><button type="button" data-info="labs">Неовет</button><button type="button" data-info="labs">ВЕТЛАБ</button><button type="button" data-info="labs">ВетЮнион</button></div>
   </div>
 </section>
 
@@ -97,14 +97,14 @@
       <div><span>Вакцинация</span><b>— ₽</b></div>
       <div><span>Чипирование</span><b>— ₽</b></div>
     </div>
-    <p class="note">Пенсионерам скидка 5% при предъявлении пенсионного удостоверения.</p>
+    <p class="note" data-info="disc" role="button" tabindex="0">Пенсионерам скидка 5% при предъявлении пенсионного удостоверения. Подробнее →</p>
   </div>
 </section>
 
 <section class="sec reviews" id="reviews">
   <div class="wrap">
     <h2>Отзывы</h2>
-    <div class="award"><img src="img/award.webp" alt="Награда Яндекс Карт «Хорошее место»"><div><b>Награда «Хорошее место»</b><span>от Яндекс Карт, за доверие и высокие оценки посетителей</span></div></div>
+    <button type="button" class="award" data-info="award"><img src="img/award.webp" alt="Награда Яндекс Карт «Хорошее место»"><div><b>Награда «Хорошее место»</b><span>от Яндекс Карт, за доверие и высокие оценки посетителей</span></div><em class="more">→</em></button>
     <p class="sub">Пример блока: сюда подтягиваются реальные отзывы с Яндекс Карт.</p>
     <div class="rev-grid">
       <div class="rev"><div class="stars">★★★★★</div><p>Здесь будет отзыв клиента с Яндекс Карт.</p><span>Пример отзыва</span></div>
