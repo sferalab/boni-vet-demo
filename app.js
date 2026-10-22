@@ -37,7 +37,7 @@ const grid=$('#svcGrid');
 function drawSvc(f){grid.innerHTML=SVC.filter(s=>f==='all'||s[3].split(' ').includes(f)).map(s=>`<div class="svc" data-s="${s[0]}"><img loading="lazy" src="img/svc/${s[0]}.webp" alt="${s[1]}"><div><i>${s[2]}</i><b>${s[1]}</b><u class="arr">›</u></div></div>`).join('')}
 drawSvc('all');
 $('#svcFilter').addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;document.querySelectorAll('#svcFilter button').forEach(x=>x.classList.toggle('on',x===b));drawSvc(b.dataset.f)});
-let SVCD=null;fetch('svc.json?v=202610221127').then(r=>r.json()).then(j=>SVCD=j).catch(()=>{});
+let SVCD=null;fetch('svc.json?v=202610221130').then(r=>r.json()).then(j=>SVCD=j).catch(()=>{});
 const esc=x=>x.replace(/[<>&]/g,c=>({'<':'&lt;','>':'&gt;','&':'&amp;'}[c]));
 function blk(items){let h='',ul=[];const fl=()=>{if(ul.length){h+='<ul>'+ul.map(x=>'<li>'+esc(x)+'</li>').join('')+'</ul>';ul=[]}};items.forEach(([t,x])=>{if(t==='li')ul.push(x);else{fl();h+='<p>'+esc(x)+'</p>'}});fl();return h}
 const GEN={exot:1,ornito:1,uzi:1};
@@ -76,7 +76,7 @@ exo:['Грызун или кролик',[['Не ест и не какает бо
 bird:['Птица или рептилия',[['Сидит нахохлившись на дне',1,'Орнитология'],['Выщипывает перья',0,'Орнитология'],['Не линяет, остатки кожи',0,'Экзотолог, ратолог, герпетолог']]]};
 const DUR=['Сегодня','2–3 дня','Дольше'];
 let H;const app=$('#app');
-function hReset(){H={pet:null,sel:new Map(),dur:'',com:''};hRender()}
+function hReset(){H={pet:null,sel:new Map(),none:new Set(),dur:'',com:'',step:0};hRender()}
 function petName(){return PETS.find(p=>p[0]===H.pet)[2]}
 function cats(){const c={...SYM};const p=PSYM[H.pet];return {[p[0]+': особое']:p[1],...c}}
 function suggest(){const isEx=H.pet==='exo'||H.pet==='bird';const cnt={};let red=false;H.sel.forEach(v=>{if(v[1])red=true;cnt[v[2]]=(cnt[v[2]]||0)+(v[1]?3:1)});
@@ -88,29 +88,38 @@ function summary(){const {svc}=suggest();const L=['Питомец: '+petName()];
  Object.entries(g).forEach(([c,a])=>L.push(c+': '+a.join(', ')));
  if(H.dur)L.push('Длительность: '+H.dur);if(H.com)L.push('Комментарий: '+H.com);L.push('Предварительно: '+svc);return L.join('\n')}
 function hRender(){
- if(!H.pet){app.innerHTML=`<div class="step-n">Шаг 1 из 2</div><div class="q">Кто Ваш питомец?</div><div class="opts g2">${PETS.map(p=>`<button class="opt" data-pet="${p[0]}"><span class="em">${p[1]}</span>${p[2]}</button>`).join('')}</div>`;return}
- const C=cats();
- app.innerHTML=`<div class="hp-top"><button class="back" data-back>← ${petName()}</button><span class="step-n">Шаг 2 из 2</span></div><div class="q">Что Вы заметили? <small>Можно выбрать несколько</small></div>
- <div class="legend"><i class="rf"></i> отмечены признаки, при которых нужен срочный прием</div>
- ${Object.entries(C).map(([c,a])=>`<div class="sg"><div class="sg-t">${c}</div><div class="chipset">${a.map(x=>`<button type="button" class="sc ${x[1]?'red':''} ${H.sel.has(x[0])?'on':''}" data-sym="${esc(x[0])}" data-c="${esc(c)}">${x[0]}</button>`).join('')}</div></div>`).join('')}
- <div class="sg"><div class="sg-t">Как давно? <small>необязательно</small></div><div class="chipset">${DUR.map(d=>`<button type="button" class="sc ${H.dur===d?'on':''}" data-dur="${d}">${d}</button>`).join('')}</div></div>
- <div class="sg"><div class="sg-t">Комментарий <small>необязательно</small></div><textarea id="hCom" rows="2" placeholder="Например: съел часть игрушки вчера вечером">${esc(H.com)}</textarea></div>
- <div id="hOut"></div>`;
+ if(!H.pet){app.innerHTML=`<div class="step-n">Кто Ваш питомец?</div><div class="q">Выберите, чтобы начать</div><div class="opts g2">${PETS.map(p=>`<button class="opt" data-pet="${p[0]}"><span class="em">${p[1]}</span>${p[2]}</button>`).join('')}</div>`;return}
+ const G=Object.entries(cats());const n=G.length+1;const st=H.step;
+ const prog=`<div class="prog"><i style="width:${Math.round(100*(st+1)/(n+1))}%"></i></div>`;
+ const top=`<div class="hp-top"><button class="back" data-prev>← ${st===0?petName():'Назад'}</button><span class="step-n">Шаг ${st+1} из ${n}</span></div>`;
+ if(st<G.length){const [c,arr]=G[st];
+  app.innerHTML=prog+top+`<div class="q">${c}</div><p class="hint">Отметьте все, что подходит. Можно пропустить.</p><div class="legend"><span class="ut">⚠ срочно</span> признак, при котором нужен срочный прием</div>
+  <div class="tiles">${arr.map(x=>`<button type="button" class="tile ${H.sel.has(x[0])?'on':''}" data-sym="${esc(x[0])}" data-c="${esc(c)}" aria-pressed="${H.sel.has(x[0])}">${x[1]?'<span class="ut">⚠ срочно</span>':''}<span class="tt">${x[0]}</span><span class="ck">✓</span></button>`).join('')}
+  <button type="button" class="tile none ${H.none.has(c)?'on':''}" data-none="${esc(c)}"><span class="tt">Ничего из этого нет</span><span class="ck">✓</span></button></div>
+  <div class="selcount">${H.sel.size?`Выбрано признаков: ${H.sel.size}`:'Пока ничего не выбрано'}</div>
+  <div class="navrow"><button class="btn ghost" data-next>Пропустить</button><button class="btn primary" data-next>Далее →</button></div>`;return}
+ app.innerHTML=prog+top+`<div class="q">Последний шаг</div>
+ <div class="sg"><div class="sg-t">Как давно? <small>необязательно</small></div><div class="tiles t3">${DUR.map(d=>`<button type="button" class="tile ${H.dur===d?'on':''}" data-dur="${d}"><span class="tt">${d}</span><span class="ck">✓</span></button>`).join('')}</div></div>
+ <div class="sg"><div class="sg-t">Комментарий <small>необязательно</small></div><textarea id="hCom" rows="2" placeholder="Например: съел часть игрушки вчера вечером">${esc(H.com)}</textarea></div><div id="hOut"></div>`;
  document.getElementById('hCom').addEventListener('input',e=>{H.com=e.target.value.trim();hOut()});hOut()}
 function hOut(){const o=document.getElementById('hOut');if(!o)return;
- if(!H.sel.size){o.innerHTML='<div class="sum-empty">Выберите хотя бы один признак, и здесь появится сводка для врача.</div>';return}
- const {red,svc}=suggest();
+ const {red,svc}=H.sel.size?suggest():{red:false,svc:'Терапия'};
  o.innerHTML=`<div class="sumcard"><div class="sum-h">📝 Сводка для врача</div><pre>${esc(summary())}</pre><div class="sum-act"><button type="button" data-copy>Скопировать</button><button type="button" data-share>Поделиться</button></div></div>
  ${red?`<div class="res urg"><h3>🚨 Срочный прием</h3><p>Среди отмеченных есть признаки, при которых важно показать питомца врачу как можно скорее. Мы работаем круглосуточно.</p><a class="btn danger" href="tel:+74953749911">Позвонить: +7 495 374-99-11</a><a class="btn ghost" target="_blank" rel="noopener" href="${ROUTE}">Маршрут до клиники</a><button class="btn ghost" data-book>Записаться со сводкой</button></div>`
- :`<div class="res ok"><h3>💚 Обычный прием</h3><p>Опасных признаков среди отмеченных нет. Рекомендуемое направление: <b>${svc}</b>. Если состояние ухудшится, звоните сразу.</p><button class="btn primary" data-book>Записаться со сводкой</button></div>`}`}
+ :H.sel.size?`<div class="res ok"><h3>💚 Обычный прием</h3><p>Опасных признаков среди отмеченных нет. Рекомендуемое направление: <b>${svc}</b>. Если состояние ухудшится, звоните сразу.</p><button class="btn primary" data-book>Записаться со сводкой</button></div>`
+ :`<div class="res ok"><h3>💚 Тревожных признаков нет</h3><p>Вы не отметили ни одного признака. Подойдет обычный прием или профилактический осмотр у терапевта.</p><button class="btn primary" data-book>Записаться на осмотр</button></div>`}
+ <button class="back" data-restart>Пройти заново</button>`}
 app.addEventListener('click',e=>{const t=e.target.closest('button');if(!t)return;
- if(t.dataset.pet){H.pet=t.dataset.pet;hRender();app.scrollIntoView({block:'start'})}
- else if('back' in t.dataset){H.pet=null;H.sel.clear();hRender()}
- else if(t.dataset.sym){const k=t.dataset.sym;if(H.sel.has(k))H.sel.delete(k);else{const a=cats()[t.dataset.c].find(x=>x[0]===k);H.sel.set(k,[a[0],a[1],a[2],t.dataset.c])}t.classList.toggle('on');hOut()}
+ if(t.dataset.pet){H.pet=t.dataset.pet;H.step=0;hRender();app.scrollIntoView({block:'start'})}
+ else if('prev' in t.dataset){if(H.step===0){H.pet=null;H.sel.clear();H.none.clear()}else H.step--;hRender();app.scrollIntoView({block:'start'})}
+ else if('next' in t.dataset){H.step++;hRender();app.scrollIntoView({block:'start'})}
+ else if('restart' in t.dataset)hReset();
+ else if(t.dataset.none!==undefined){const c=t.dataset.none;if(H.none.has(c))H.none.delete(c);else{H.none.add(c);[...H.sel].forEach(([k,v])=>{if(v[3]===c)H.sel.delete(k)})}hRender()}
+ else if(t.dataset.sym){const k=t.dataset.sym,c=t.dataset.c;if(H.sel.has(k))H.sel.delete(k);else{const a=cats()[c].find(x=>x[0]===k);H.sel.set(k,[a[0],a[1],a[2],c]);H.none.delete(c)}hRender()}
  else if(t.dataset.dur){H.dur=H.dur===t.dataset.dur?'':t.dataset.dur;app.querySelectorAll('[data-dur]').forEach(b=>b.classList.toggle('on',b.dataset.dur===H.dur));hOut()}
  else if('copy' in t.dataset){const txt=summary();(navigator.clipboard?navigator.clipboard.writeText(txt):Promise.reject()).then(()=>{t.textContent='Скопировано ✓'},()=>{const ta=document.createElement('textarea');ta.value=txt;document.body.appendChild(ta);ta.select();document.execCommand('copy');ta.remove();t.textContent='Скопировано ✓'});setTimeout(()=>t.textContent='Скопировать',2000)}
  else if('share' in t.dataset){const txt=summary();if(navigator.share)navigator.share({title:'Сводка для врача',text:txt}).catch(()=>{});else{t.dataset.copy='';t.click()}}
- else if('book' in t.dataset){const map={cat:0,dog:1,exo:2,bird:3};setPet(map[H.pet]);$('#bSvc').value=suggest().svc;$('#bCom').value=summary();$('#booking').scrollIntoView()}
+ else if('book' in t.dataset){const map={cat:0,dog:1,exo:2,bird:3};setPet(map[H.pet]);$('#bSvc').value=H.sel.size?suggest().svc:'Первичный прием терапевта';$('#bCom').value=summary();$('#booking').scrollIntoView()}
 });
 // booking
 hReset();
@@ -165,3 +174,4 @@ document.addEventListener('click',e=>{const t=e.target.closest('[data-info]');if
 document.addEventListener('keydown',e=>{if(e.key==='Escape')document.querySelectorAll('.modal').forEach(m=>m.remove());if(e.key==='Enter'&&e.target.dataset&&e.target.dataset.info)openInfo(e.target.dataset.info)});
 docs.querySelectorAll('.doc').forEach((el,i)=>{el.tabIndex=0;el.setAttribute('role','button');el.addEventListener('click',()=>{const d=DOCS[i];INFO['doc'+i]={i:`<img src="img/doc/${d[0]}.webp" alt="" style="width:96px;height:96px;border-radius:50%;object-fit:cover;aspect-ratio:1;margin:0">`,t:d[1],p:(d[4]?d[4]+'. ':'')+d[2]+(d[3]?'. Стаж работы: '+d[3]+'.':''),s:[['Как записаться к врачу',['Выберите время онлайн и укажите в разговоре с администратором, к кому хотите попасть','Или позвоните, администратор подберет удобное время']]],a:A.book('')+A.call()};openInfo('doc'+i)})});
 const tt=document.getElementById('toTop');addEventListener('scroll',()=>tt.classList.toggle('show',scrollY>innerHeight),{passive:true});tt.onclick=()=>scrollTo({top:0,behavior:'smooth'});
+(()=>{const f=document.getElementById('fab');const io=new IntersectionObserver(es=>es.forEach(e=>f.classList.toggle('away',e.isIntersecting&&e.intersectionRatio>0.25)),{threshold:[0,0.25,0.5]});['#app','#bookForm'].forEach(s=>{const el=document.querySelector(s);if(el)io.observe(el)})})();
