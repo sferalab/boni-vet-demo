@@ -37,7 +37,7 @@ const grid=$('#svcGrid');
 function drawSvc(f){grid.innerHTML=SVC.filter(s=>f==='all'||s[3].split(' ').includes(f)).map(s=>`<div class="svc" data-s="${s[0]}"><img loading="lazy" src="img/svc/${s[0]}.webp" alt="${s[1]}"><div><i>${s[2]}</i><b>${s[1]}</b><u class="arr">›</u></div></div>`).join('')}
 drawSvc('all');
 $('#svcFilter').addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;document.querySelectorAll('#svcFilter button').forEach(x=>x.classList.toggle('on',x===b));drawSvc(b.dataset.f)});
-let SVCD=null;fetch('svc.json').then(r=>r.json()).then(j=>SVCD=j).catch(()=>{});
+let SVCD=null;fetch('svc.json?v=202610221127').then(r=>r.json()).then(j=>SVCD=j).catch(()=>{});
 const esc=x=>x.replace(/[<>&]/g,c=>({'<':'&lt;','>':'&gt;','&':'&amp;'}[c]));
 function blk(items){let h='',ul=[];const fl=()=>{if(ul.length){h+='<ul>'+ul.map(x=>'<li>'+esc(x)+'</li>').join('')+'</ul>';ul=[]}};items.forEach(([t,x])=>{if(t==='li')ul.push(x);else{fl();h+='<p>'+esc(x)+'</p>'}});fl();return h}
 const GEN={exot:1,ornito:1,uzi:1};
