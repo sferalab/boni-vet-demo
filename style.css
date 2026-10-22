@@ -138,3 +138,8 @@ button.award{width:100%;border:0;text-align:left;font:inherit;color:inherit;curs
 .accs summary::-webkit-details-marker{display:none}.accs summary::after{content:'+';position:absolute;right:4px;top:10px;font-size:20px;color:var(--t)}
 .accs details[open] summary::after{content:'–'}.acc{padding:0 0 12px;color:var(--mu);font-size:14.5px}.acc p{margin:0 0 8px}.acc ul{margin:0 0 8px 18px}.acc li{margin:3px 0}
 .modal .sheet p.gen{margin:8px 0 0}
+.perks{display:flex;gap:8px;overflow-x:auto;margin:0 -18px 16px;padding:2px 18px;scrollbar-width:none;-webkit-overflow-scrolling:touch}.perks::-webkit-scrollbar{display:none}
+.perk{flex:none;border:1px solid #d6e6e7;background:#fff;border-radius:999px;padding:8px 13px;font:inherit;font-weight:700;font-size:13.5px;color:var(--td);cursor:pointer;box-shadow:0 4px 12px -8px rgba(15,60,70,.4)}
+.perk::after{content:' ›';color:var(--t)}
+.perk.hot{background:linear-gradient(135deg,#ff9b3d,#f26b2c);color:#fff;border:0}.perk.hot b{font-size:15px}.perk.hot::after{color:#fff}
+.perk.ex{border-style:dashed;color:var(--mu);background:#fbfdfd}
