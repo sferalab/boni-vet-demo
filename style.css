@@ -155,3 +155,4 @@ button.award{width:100%;border:0;text-align:left;font:inherit;color:inherit;curs
 .fab .f{width:54px;height:54px;border-radius:50%;display:flex;align-items:center;justify-content:center;box-shadow:0 8px 20px -6px rgba(0,0,0,.35),0 2px 6px rgba(0,0,0,.15);-webkit-backdrop-filter:none}
 .fab .f svg{width:28px;height:28px;fill:#fff;flex:none}
 .fab .f.vk{background:#0077FF}.fab .f.tg{background:#229ED9}.fab .f.max{background:#7B3FF2;background:linear-gradient(135deg,#2E8BFF 0%,#7B3FF2 55%,#B23BE8 100%)}
+.acts.sticky{background:#fff;box-shadow:0 -14px 14px -4px #fff;padding-top:12px}
