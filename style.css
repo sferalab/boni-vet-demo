@@ -144,3 +144,5 @@ button.award{width:100%;border:0;text-align:left;font:inherit;color:inherit;curs
 .perk.hot{background:linear-gradient(135deg,#ff9b3d,#f26b2c);color:#fff;border:0}.perk.hot b{font-size:15px}.perk.hot::after{color:#fff}
 .perk.ex{border-style:dashed;color:var(--mu);background:#fbfdfd}
 .hero-text,.hero-img{min-width:0}
+.vk{background:#0077ff}.max{background:linear-gradient(135deg,#3d8bff,#8a3dff)}.f svg{width:28px}
+.helper-link{font-size:14px}.helper-link a b{color:var(--t)}
