@@ -59,40 +59,61 @@ docs.innerHTML=DOCS.map(d=>`<div class="doc"><img loading="lazy" src="img/doc/${
 $('#allDocs').onclick=e=>{const g=docs.classList.toggle('grid');e.target.textContent=g?'Свернуть':'Показать всех врачей'};
 // symptom helper
 const PETS=[['cat','🐱','Кошка'],['dog','🐶','Собака'],['exo','🐰','Грызун или кролик'],['bird','🦜','Птица или рептилия']];
-const Q={
- common:[
-  ['Тяжело дышит, дышит открытым ртом, или десны и язык бледные или синие?',2],
-  ['Были судороги, обморок, питомец не может встать?',2],
-  ['Травма: падение, укус, ДТП, сильное кровотечение?',2],
-  ['Мог съесть яд, лекарство, кость или посторонний предмет?',2],
- ],
- cat:[['Часто ходит в лоток, но мочи нет или очень мало?',2]],
- dog:[['Живот вздут и твердый, есть позывы к рвоте без результата?',2]],
- exo:[['Не ест и не какает больше 12 часов?',2]],
- bird:[['Сидит нахохлившись на дне клетки, не реагирует?',2]],
- tail:[
-  ['Рвота или понос больше суток, или с кровью?',2],
-  ['Отказывается от еды больше суток, сильно вялый?',1],
-  ['Есть другие симптомы: зуд, кашель, хромота, проблемы с глазами или ушами?',0]
- ]};
-let st;const app=$('#app');
-function reset(){st={pet:null,qs:[],i:0,score:0,flags:[]};render()}
-function render(){
- if(!st.pet){app.innerHTML=`<div class="prog"><i style="width:8%"></i></div><div class="step-n">Шаг 1</div><div class="q">Кто Ваш питомец?</div><div class="opts g2">${PETS.map(p=>`<button class="opt" data-pet="${p[0]}"><span class="em">${p[1]}</span>${p[2]}</button>`).join('')}</div>`;return}
- if(st.i<st.qs.length){const q=st.qs[st.i];app.innerHTML=`<div class="prog"><i style="width:${10+90*st.i/st.qs.length}%"></i></div><div class="step-n">Вопрос ${st.i+1} из ${st.qs.length}</div><div class="q">${q[0]}</div><div class="yn"><button class="opt" data-a="1">Да</button><button class="opt" data-a="0">Нет</button></div><button class="back" data-back>← Назад</button>`;return}
- const urgent=st.score>=2;
- if(urgent){app.innerHTML=`<div class="prog"><i style="width:100%;background:var(--r)"></i></div><div class="res urg"><div class="big">🚨</div><h3>Срочно в клинику</h3><p>Такие симптомы требуют осмотра врача как можно скорее. Мы работаем круглосуточно.</p><ul>${st.flags.map(f=>`<li>${f}</li>`).join('')}</ul><a class="btn danger" href="tel:+74953749911">Позвонить: +7 495 374-99-11</a><a class="btn ghost" target="_blank" rel="noopener" href="https://yandex.ru/maps/?text=%D0%9C%D0%BE%D1%81%D0%BA%D0%B2%D0%B0%2C%20%D0%A1%D1%83%D0%B4%D0%BE%D1%81%D1%82%D1%80%D0%BE%D0%B8%D1%82%D0%B5%D0%BB%D1%8C%D0%BD%D0%B0%D1%8F%2010%D0%BA2">Маршрут до клиники</a><button class="back" data-reset>Пройти заново</button></div>`}
- else{app.innerHTML=`<div class="prog"><i style="width:100%"></i></div><div class="res ok"><div class="big">💚</div><h3>Запишитесь на прием</h3><p>Опасных признаков нет. Покажите питомца врачу в удобное время${st.score?', лучше в ближайшие сутки':''}. Если состояние ухудшится, звоните сразу.</p><button class="btn primary" data-book>Выбрать время</button><button class="back" data-reset>Пройти заново</button></div>`}
-}
-app.addEventListener('click',e=>{const t=e.target.closest('button,a');if(!t)return;
- if(t.dataset.pet){st.pet=t.dataset.pet;st.qs=[...Q.common,...Q[st.pet],...Q.tail];render()}
- else if(t.dataset.a!==undefined){const q=st.qs[st.i];st.hist=(st.hist||[]);st.hist.push([st.score,st.flags.slice()]);if(t.dataset.a==='1'){st.score=Math.max(st.score,q[1]);if(q[1]===2)st.flags.push(q[0].replace('?',''))}st.i++;render()}
- else if('back' in t.dataset){if(st.i===0){st.pet=null}else{st.i--;const h=st.hist.pop();st.score=h[0];st.flags=h[1]}render()}
- else if('reset' in t.dataset)reset();
- else if('book' in t.dataset){const map={cat:0,dog:1,exo:2,bird:3};setPet(map[st.pet]);$('#booking').scrollIntoView()}
+// [text, red, service]
+const SYM={
+'Питание':[['Отказ от еды больше суток',0,'Терапия'],['Сниженный аппетит',0,'Терапия'],['Сильная жажда',0,'Эндокринология'],['Похудение',0,'Эндокринология']],
+'ЖКТ':[['Рвота',0,'Гастроэнтерология'],['Многократная рвота',1,'Гастроэнтерология'],['Понос',0,'Гастроэнтерология'],['Кровь в рвоте или кале',1,'Гастроэнтерология'],['Вздутый твердый живот',1,'Хирургия'],['Съел чужеродный предмет',1,'Эндоскопия'],['Возможное отравление',1,'Отделение ОАРИТ (стационар)']],
+'Дыхание':[['Кашель',0,'Пульмонология'],['Чихание, выделения из носа',0,'Терапия'],['Тяжелое дыхание, дышит открытым ртом',1,'Отделение ОАРИТ (стационар)'],['Бледные или синие десны',1,'Отделение ОАРИТ (стационар)']],
+'Кожа и шерсть':[['Зуд, расчесы',0,'Дерматология'],['Выпадение шерсти',0,'Дерматология'],['Покраснение, сыпь',0,'Дерматология'],['Шишка или уплотнение',0,'Хирургия']],
+'Туалет':[['Частые позывы, мало мочи',0,'Нефрология'],['Кровь в моче',0,'Нефрология'],['Совсем не может помочиться',1,'Нефрология'],['Запор',0,'Гастроэнтерология']],
+'Поведение':[['Вялость, много спит',0,'Терапия'],['Прячется, беспокоится',0,'Терапия'],['Судороги',1,'Неврология'],['Обморок, не встает',1,'Отделение ОАРИТ (стационар)'],['Шаткая походка',0,'Неврология']],
+'Травмы':[['Хромота',0,'Травматология и ортопедия'],['Падение с высоты',1,'Травматология и ортопедия'],['Укус, рана',0,'Хирургия'],['Сильное кровотечение',1,'Хирургия'],['Попал под машину',1,'Травматология и ортопедия']],
+'Глаза и уши':[['Слезятся или гноятся глаза',0,'Офтальмология'],['Щурится, трет глаз',0,'Офтальмология'],['Травма глаза',1,'Офтальмология'],['Чешет уши, запах из ушей',0,'Дерматология'],['Трясет головой',0,'Терапия']],
+'Зубы':[['Запах изо рта',0,'Стоматология'],['Жует на одну сторону',0,'Стоматология']]};
+const PSYM={cat:['Кошка',[['Ходит в лоток часто и безрезультатно',1,'Нефрология'],['Рвота шерстью чаще обычного',0,'Гастроэнтерология']]],
+dog:['Собака',[['Безрезультатные позывы к рвоте',1,'Хирургия'],['Ест траву, урчит живот',0,'Гастроэнтерология']]],
+exo:['Грызун или кролик',[['Не ест и не какает больше 12 часов',1,'Экзотолог, ратолог, герпетолог'],['Слюнотечение, мокрый подбородок',0,'Экзотолог, ратолог, герпетолог'],['Отросшие резцы',0,'Экзотолог, ратолог, герпетолог']]],
+bird:['Птица или рептилия',[['Сидит нахохлившись на дне',1,'Орнитология'],['Выщипывает перья',0,'Орнитология'],['Не линяет, остатки кожи',0,'Экзотолог, ратолог, герпетолог']]]};
+const DUR=['Сегодня','2–3 дня','Дольше'];
+let H;const app=$('#app');
+function hReset(){H={pet:null,sel:new Map(),dur:'',com:''};hRender()}
+function petName(){return PETS.find(p=>p[0]===H.pet)[2]}
+function cats(){const c={...SYM};const p=PSYM[H.pet];return {[p[0]+': особое']:p[1],...c}}
+function suggest(){const isEx=H.pet==='exo'||H.pet==='bird';const cnt={};let red=false;H.sel.forEach(v=>{if(v[1])red=true;cnt[v[2]]=(cnt[v[2]]||0)+(v[1]?3:1)});
+ let svc=Object.entries(cnt).sort((a,b)=>b[1]-a[1])[0];svc=svc?svc[0]:'Терапия';
+ if(isEx&&!['Экзотолог, ратолог, герпетолог','Орнитология'].includes(svc))svc=H.pet==='bird'?'Орнитология':'Экзотолог, ратолог, герпетолог';
+ return {red,svc}}
+function summary(){const {svc}=suggest();const L=['Питомец: '+petName()];
+ const g={};H.sel.forEach((v,k)=>{(g[v[3]]=g[v[3]]||[]).push(v[0]+(v[1]?' (!)':''))});
+ Object.entries(g).forEach(([c,a])=>L.push(c+': '+a.join(', ')));
+ if(H.dur)L.push('Длительность: '+H.dur);if(H.com)L.push('Комментарий: '+H.com);L.push('Предварительно: '+svc);return L.join('\n')}
+function hRender(){
+ if(!H.pet){app.innerHTML=`<div class="step-n">Шаг 1 из 2</div><div class="q">Кто Ваш питомец?</div><div class="opts g2">${PETS.map(p=>`<button class="opt" data-pet="${p[0]}"><span class="em">${p[1]}</span>${p[2]}</button>`).join('')}</div>`;return}
+ const C=cats();
+ app.innerHTML=`<div class="hp-top"><button class="back" data-back>← ${petName()}</button><span class="step-n">Шаг 2 из 2</span></div><div class="q">Что Вы заметили? <small>Можно выбрать несколько</small></div>
+ <div class="legend"><i class="rf"></i> отмечены признаки, при которых нужен срочный прием</div>
+ ${Object.entries(C).map(([c,a])=>`<div class="sg"><div class="sg-t">${c}</div><div class="chipset">${a.map(x=>`<button type="button" class="sc ${x[1]?'red':''} ${H.sel.has(x[0])?'on':''}" data-sym="${esc(x[0])}" data-c="${esc(c)}">${x[0]}</button>`).join('')}</div></div>`).join('')}
+ <div class="sg"><div class="sg-t">Как давно? <small>необязательно</small></div><div class="chipset">${DUR.map(d=>`<button type="button" class="sc ${H.dur===d?'on':''}" data-dur="${d}">${d}</button>`).join('')}</div></div>
+ <div class="sg"><div class="sg-t">Комментарий <small>необязательно</small></div><textarea id="hCom" rows="2" placeholder="Например: съел часть игрушки вчера вечером">${esc(H.com)}</textarea></div>
+ <div id="hOut"></div>`;
+ document.getElementById('hCom').addEventListener('input',e=>{H.com=e.target.value.trim();hOut()});hOut()}
+function hOut(){const o=document.getElementById('hOut');if(!o)return;
+ if(!H.sel.size){o.innerHTML='<div class="sum-empty">Выберите хотя бы один признак, и здесь появится сводка для врача.</div>';return}
+ const {red,svc}=suggest();
+ o.innerHTML=`<div class="sumcard"><div class="sum-h">📝 Сводка для врача</div><pre>${esc(summary())}</pre><div class="sum-act"><button type="button" data-copy>Скопировать</button><button type="button" data-share>Поделиться</button></div></div>
+ ${red?`<div class="res urg"><h3>🚨 Срочный прием</h3><p>Среди отмеченных есть признаки, при которых важно показать питомца врачу как можно скорее. Мы работаем круглосуточно.</p><a class="btn danger" href="tel:+74953749911">Позвонить: +7 495 374-99-11</a><a class="btn ghost" target="_blank" rel="noopener" href="${ROUTE}">Маршрут до клиники</a><button class="btn ghost" data-book>Записаться со сводкой</button></div>`
+ :`<div class="res ok"><h3>💚 Обычный прием</h3><p>Опасных признаков среди отмеченных нет. Рекомендуемое направление: <b>${svc}</b>. Если состояние ухудшится, звоните сразу.</p><button class="btn primary" data-book>Записаться со сводкой</button></div>`}`}
+app.addEventListener('click',e=>{const t=e.target.closest('button');if(!t)return;
+ if(t.dataset.pet){H.pet=t.dataset.pet;hRender();app.scrollIntoView({block:'start'})}
+ else if('back' in t.dataset){H.pet=null;H.sel.clear();hRender()}
+ else if(t.dataset.sym){const k=t.dataset.sym;if(H.sel.has(k))H.sel.delete(k);else{const a=cats()[t.dataset.c].find(x=>x[0]===k);H.sel.set(k,[a[0],a[1],a[2],t.dataset.c])}t.classList.toggle('on');hOut()}
+ else if(t.dataset.dur){H.dur=H.dur===t.dataset.dur?'':t.dataset.dur;app.querySelectorAll('[data-dur]').forEach(b=>b.classList.toggle('on',b.dataset.dur===H.dur));hOut()}
+ else if('copy' in t.dataset){const txt=summary();(navigator.clipboard?navigator.clipboard.writeText(txt):Promise.reject()).then(()=>{t.textContent='Скопировано ✓'},()=>{const ta=document.createElement('textarea');ta.value=txt;document.body.appendChild(ta);ta.select();document.execCommand('copy');ta.remove();t.textContent='Скопировано ✓'});setTimeout(()=>t.textContent='Скопировать',2000)}
+ else if('share' in t.dataset){const txt=summary();if(navigator.share)navigator.share({title:'Сводка для врача',text:txt}).catch(()=>{});else{t.dataset.copy='';t.click()}}
+ else if('book' in t.dataset){const map={cat:0,dog:1,exo:2,bird:3};setPet(map[H.pet]);$('#bSvc').value=suggest().svc;$('#bCom').value=summary();$('#booking').scrollIntoView()}
 });
-reset();
 // booking
+hReset();
 const sel=$('#bSvc');sel.innerHTML='<option>Первичный прием терапевта</option>'+SVC.map(s=>`<option>${s[1]}</option>`).join('');
 const seg=document.querySelector('.seg');function setPet(i){[...seg.children].forEach((b,j)=>b.classList.toggle('on',j===i))}
 seg.addEventListener('click',e=>{const b=e.target.closest('button');if(b)setPet([...seg.children].indexOf(b))});
@@ -109,7 +130,7 @@ $('#bookForm').addEventListener('submit',e=>{e.preventDefault();const err=$('#bE
  if(!slot){err.textContent='Выберите время приема';return}if(!name){err.textContent='Укажите Ваше имя';return}if(digits.length<11){err.textContent='Укажите телефон полностью';return}err.textContent='';
  const d=new Date();d.setDate(d.getDate()+day);const pet=seg.querySelector('.on').textContent;
  $('#bookForm').hidden=true;const done=$('#bDone');done.hidden=false;
- done.innerHTML=`<div class="big">🎉</div><h3>Вы записаны!</h3><p>${name}, администратор позвонит Вам для подтверждения и заранее напомнит о визите.</p><div class="sum"><div>🐾 <b>${pet}</b></div><div>🩺 ${sel.value}</div><div>📅 ${d.getDate()} ${MN[d.getMonth()]}, ${slot}</div><div>📍 Судостроительная ул., 10 к. 2</div></div><button class="btn ghost" id="again">Записаться еще раз</button><p class="tiny">Демо: заявка никуда не отправляется.</p>`;
+ done.innerHTML=`<div class="big">🎉</div><h3>Вы записаны!</h3><p>${name}, администратор позвонит Вам для подтверждения и заранее напомнит о визите.</p><div class="sum"><div>🐾 <b>${pet}</b></div><div>🩺 ${sel.value}</div><div>📅 ${d.getDate()} ${MN[d.getMonth()]}, ${slot}</div><div>📍 Судостроительная ул., 10 к. 2</div>${$('#bCom').value.trim()?`<div class="cm">💬 ${esc($('#bCom').value.trim()).replace(/\n/g,'<br>')}</div>`:''}</div><button class="btn ghost" id="again">Записаться еще раз</button><p class="tiny">Демо: заявка никуда не отправляется.</p>`;
  done.scrollIntoView({block:'center'});$('#again').onclick=()=>{done.hidden=true;$('#bookForm').hidden=false;slot=null;drawSlots()}});
 document.querySelectorAll('a[data-book]').forEach(a=>a.addEventListener('click',()=>{}));
 // info sheets

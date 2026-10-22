@@ -156,3 +156,20 @@ button.award{width:100%;border:0;text-align:left;font:inherit;color:inherit;curs
 .fab .f svg{width:28px;height:28px;fill:#fff;flex:none}
 .fab .f.vk{background:#0077FF}.fab .f.tg{background:#229ED9}.fab .f.max{background:#7B3FF2;background:linear-gradient(135deg,#2E8BFF 0%,#7B3FF2 55%,#B23BE8 100%)}
 .acts.sticky{background:#fff;box-shadow:0 -14px 14px -4px #fff;padding-top:12px}
+.hp-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:4px}.hp-top .back{margin:0;padding:0}
+.q small,.sg-t small{font-size:13px;font-weight:600;color:var(--mu)}
+.legend{font-size:12.5px;color:var(--mu);margin:-8px 0 10px;display:flex;align-items:center;gap:6px}
+.rf,.sc.red::before{display:inline-block;width:7px;height:7px;border-radius:50%;background:var(--r);flex:none}
+.sg{margin:14px 0 0}.sg-t{font-weight:800;font-size:14px;margin-bottom:8px}
+.chipset{display:flex;flex-wrap:wrap;gap:7px}
+.sc{border:1.5px solid #dbe7e7;background:#fafcfc;border-radius:999px;padding:8px 12px;font:inherit;font-size:13.5px;font-weight:600;color:var(--ink);cursor:pointer;display:inline-flex;align-items:center;gap:6px;transition:.12s}
+.sc.red::before{content:''}
+.sc.on{background:var(--td);border-color:var(--td);color:#fff}.sc.red.on{background:#c93a3f;border-color:#c93a3f}.sc.red.on::before{background:#fff}
+#app textarea,.book textarea{width:100%;border:2px solid #e3ecec;background:#fafcfc;border-radius:13px;padding:11px;font:inherit;font-size:15px;resize:vertical;outline:none}
+#app textarea:focus,.book textarea:focus{border-color:var(--t2)}
+.sum-empty{margin-top:16px;border:2px dashed #dbe7e7;border-radius:16px;padding:14px;color:var(--mu);font-size:14px;text-align:center}
+.sumcard{margin-top:16px;background:#f3f8f8;border:1px solid #d6e6e7;border-radius:18px;padding:14px}
+.sum-h{font-weight:800;margin-bottom:8px}.sumcard pre{white-space:pre-wrap;font:inherit;font-size:14px;color:#2c4245;line-height:1.5}
+.sum-act{display:flex;gap:8px;margin-top:10px}.sum-act button{flex:1;border:0;background:#fff;border-radius:12px;padding:10px;font:inherit;font-weight:800;color:var(--t);cursor:pointer;box-shadow:0 1px 0 #d6e6e7}
+#hOut .res{text-align:left;margin-top:14px}#hOut .res h3{font-size:21px}#hOut .res .btn{margin-top:8px}
+.done .cm{border-top:1px dashed #d6e6e7;padding-top:8px;margin-top:4px;font-size:13.5px;color:#3e5356}
