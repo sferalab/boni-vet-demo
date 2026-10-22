@@ -143,3 +143,4 @@ button.award{width:100%;border:0;text-align:left;font:inherit;color:inherit;curs
 .perk::after{content:' ›';color:var(--t)}
 .perk.hot{background:linear-gradient(135deg,#ff9b3d,#f26b2c);color:#fff;border:0}.perk.hot b{font-size:15px}.perk.hot::after{color:#fff}
 .perk.ex{border-style:dashed;color:var(--mu);background:#fbfdfd}
+.hero-text,.hero-img{min-width:0}
